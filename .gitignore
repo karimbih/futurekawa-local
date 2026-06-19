@@ -1,0 +1,54 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments (Environnements virtuels)
+.venv/
+venv/
+ENV/
+env/
+
+# Configuration and Secrets (TRÈS IMPORTANT pour protéger tes mots de passe)
+.env
+.env.*
+!.env.example
+
+# IDEs and Editors (Fichiers de ton éditeur de code)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Databases (Au cas où tu aurais un fichier SQLite local, même si tu es sur Postgres)
+*.sqlite3
+*.db
+
+# OS files
+.DS_Store
+Thumbs.db
