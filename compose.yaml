@@ -61,16 +61,19 @@ services:
     image: nodered/node-red:latest
     container_name: futurekawa-country-nodered
     restart: unless-stopped
+    entrypoint: /bin/sh
+    command: /start.sh
     ports:
       - "1880:1880"
     environment:
       TZ: Europe/Paris
     volumes:
       # Données Node-RED (flows.json...) versionnées dans le repo → portable
-      - ${NODE_RED_DATA_DIR:-./node-red/data}:/data
+      - ./node-red/data:/data
+      # Installe les dépendances (dashboard...) puis démarre Node-RED
+      - ./node-red/start.sh:/start.sh:ro
 
 volumes:
   db_data:
     # Volume géré par compose (créé automatiquement sur toute machine).
     # Un volume vierge est initialisé par ./database/init/01_init.sql.
-

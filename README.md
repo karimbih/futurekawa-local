@@ -21,7 +21,7 @@ docker compose up -d --build
 ```
 
 - API : http://localhost:8000  (docs : http://localhost:8000/docs)
-- Node-RED : http://localhost:1880
+- Node-RED : http://localhost:1880  (dashboard : http://localhost:1880/ui)
 - MQTT broker : localhost:1883
 
 Arrêt : `docker compose down`
@@ -39,9 +39,10 @@ Arrêt : `docker compose down`
 ├── mosquitto/
 │   └── mosquitto.conf
 ├── node-red/
-│   └── data/                # flows.json + settings.js versionnés (portable)
+│   ├── start.sh              # installe les dépendances puis démarre Node-RED
+│   └── data/                 # flows.json + settings.js versionnés (portable)
 └── database/
-    └── init/                # schéma + seed (volume Postgres vierge uniquement)
+    └── init/                 # schéma + seed (volume Postgres vierge uniquement)
 ```
 
 ## API

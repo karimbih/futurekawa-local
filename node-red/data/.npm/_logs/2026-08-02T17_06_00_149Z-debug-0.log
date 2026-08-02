@@ -1,0 +1,143 @@
+0 verbose cli /usr/local/bin/node /usr/src/node-red/node_modules/.bin/npm
+1 info using npm@10.9.8
+2 info using node@v20.20.2
+3 silly config load:file:/usr/src/node-red/node_modules/npm/npmrc
+4 warn config only Use `--omit=dev` to omit dev dependencies from the install.
+5 silly config load:file:/data/.npmrc
+6 silly config load:file:/usr/src/node-red/.npmrc
+7 silly config load:file:/usr/local/etc/npmrc
+8 verbose title npm install
+9 verbose argv "install" "--only" "prod" "--no-audit" "--no-fund" "--unsafe-perm"
+10 verbose logfile logs-max:10 dir:/data/.npm/_logs/2026-08-02T17_06_00_149Z-
+11 verbose logfile /data/.npm/_logs/2026-08-02T17_06_00_149Z-debug-0.log
+12 silly logfile done cleaning log files
+13 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+14 silly idealTree buildDeps
+15 silly reify moves {}
+16 http cache socket.io-parser@https://registry.npmjs.org/socket.io-parser/-/socket.io-parser-4.2.7.tgz 1ms (cache hit)
+17 http cache socket.io-adapter@https://registry.npmjs.org/socket.io-adapter/-/socket.io-adapter-2.5.8.tgz 0ms (cache hit)
+18 http cache socket.io@https://registry.npmjs.org/socket.io/-/socket.io-4.8.3.tgz 0ms (cache hit)
+19 http cache ws@https://registry.npmjs.org/ws/-/ws-8.21.1.tgz 0ms (cache hit)
+20 http cache setprototypeof@https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.2.0.tgz 0ms (cache hit)
+21 http cache toidentifier@https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.1.tgz 0ms (cache hit)
+22 http cache serve-static@https://registry.npmjs.org/serve-static/-/serve-static-1.16.3.tgz 0ms (cache hit)
+23 http cache send@https://registry.npmjs.org/send/-/send-0.19.2.tgz 0ms (cache hit)
+24 http cache parseurl@https://registry.npmjs.org/parseurl/-/parseurl-1.3.3.tgz 0ms (cache hit)
+25 http cache safe-buffer@https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz 1ms (cache hit)
+26 http cache range-parser@https://registry.npmjs.org/range-parser/-/range-parser-1.2.1.tgz 0ms (cache hit)
+27 http cache on-headers@https://registry.npmjs.org/on-headers/-/on-headers-1.1.0.tgz 0ms (cache hit)
+28 http cache object-assign@https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz 0ms (cache hit)
+29 http cache on-finished@https://registry.npmjs.org/on-finished/-/on-finished-2.4.1.tgz 0ms (cache hit)
+30 http cache node-red-dashboard@https://registry.npmjs.org/node-red-dashboard/-/node-red-dashboard-3.6.6.tgz 0ms (cache hit)
+31 http cache negotiator@https://registry.npmjs.org/negotiator/-/negotiator-0.6.4.tgz 0ms (cache hit)
+32 http cache ms@https://registry.npmjs.org/ms/-/ms-2.0.0.tgz 0ms (cache hit)
+33 http cache mime-types@https://registry.npmjs.org/mime-types/-/mime-types-2.1.35.tgz 0ms (cache hit)
+34 http cache mime-db@https://registry.npmjs.org/mime-db/-/mime-db-1.54.0.tgz 0ms (cache hit)
+35 http cache mime@https://registry.npmjs.org/mime/-/mime-1.6.0.tgz 0ms (cache hit)
+36 http cache inherits@https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz 0ms (cache hit)
+37 http cache jquery@https://registry.npmjs.org/jquery/-/jquery-3.7.1.tgz 0ms (cache hit)
+38 http cache http-errors@https://registry.npmjs.org/http-errors/-/http-errors-2.0.1.tgz 0ms (cache hit)
+39 http cache gridstack@https://registry.npmjs.org/gridstack/-/gridstack-0.6.4.tgz 0ms (cache hit)
+40 http cache fresh@https://registry.npmjs.org/fresh/-/fresh-0.5.2.tgz 0ms (cache hit)
+41 http cache escape-html@https://registry.npmjs.org/escape-html/-/escape-html-1.0.3.tgz 0ms (cache hit)
+42 http cache etag@https://registry.npmjs.org/etag/-/etag-1.8.1.tgz 0ms (cache hit)
+43 http cache engine.io@https://registry.npmjs.org/engine.io/-/engine.io-6.6.9.tgz 0ms (cache hit)
+44 http cache engine.io-parser@https://registry.npmjs.org/engine.io-parser/-/engine.io-parser-5.2.3.tgz 0ms (cache hit)
+45 http cache ee-first@https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz 0ms (cache hit)
+46 http cache encodeurl@https://registry.npmjs.org/encodeurl/-/encodeurl-2.0.0.tgz 0ms (cache hit)
+47 http cache destroy@https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz 0ms (cache hit)
+48 http cache cors@https://registry.npmjs.org/cors/-/cors-2.8.6.tgz 0ms (cache hit)
+49 http cache depd@https://registry.npmjs.org/depd/-/depd-2.0.0.tgz 0ms (cache hit)
+50 http cache debug@https://registry.npmjs.org/debug/-/debug-2.6.9.tgz 0ms (cache hit)
+51 http cache cookie@https://registry.npmjs.org/cookie/-/cookie-0.7.2.tgz 0ms (cache hit)
+52 http cache compression@https://registry.npmjs.org/compression/-/compression-1.8.1.tgz 0ms (cache hit)
+53 http cache bytes@https://registry.npmjs.org/bytes/-/bytes-3.1.2.tgz 0ms (cache hit)
+54 http cache compressible@https://registry.npmjs.org/compressible/-/compressible-2.0.18.tgz 0ms (cache hit)
+55 http cache base64id@https://registry.npmjs.org/base64id/-/base64id-2.0.0.tgz 0ms (cache hit)
+56 http cache accepts@https://registry.npmjs.org/accepts/-/accepts-1.3.8.tgz 0ms (cache hit)
+57 http cache @types/ws@https://registry.npmjs.org/@types/ws/-/ws-8.18.1.tgz 0ms (cache hit)
+58 http cache @types/node@https://registry.npmjs.org/@types/node/-/node-26.1.2.tgz 0ms (cache hit)
+59 http cache vary@https://registry.npmjs.org/vary/-/vary-1.1.2.tgz 0ms (cache hit)
+60 http cache @types/cors@https://registry.npmjs.org/@types/cors/-/cors-2.8.19.tgz 0ms (cache hit)
+61 http cache undici-types@https://registry.npmjs.org/undici-types/-/undici-types-8.3.0.tgz 0ms (cache hit)
+62 http cache statuses@https://registry.npmjs.org/statuses/-/statuses-2.0.2.tgz 0ms (cache hit)
+63 http cache ms@https://registry.npmjs.org/ms/-/ms-2.1.3.tgz 0ms (cache hit)
+64 http cache @socket.io/component-emitter@https://registry.npmjs.org/@socket.io/component-emitter/-/component-emitter-3.1.2.tgz 0ms (cache hit)
+65 http cache ms@https://registry.npmjs.org/ms/-/ms-2.1.3.tgz 0ms (cache hit)
+66 http cache debug@https://registry.npmjs.org/debug/-/debug-4.4.3.tgz 0ms (cache hit)
+67 http cache ms@https://registry.npmjs.org/ms/-/ms-2.1.3.tgz 0ms (cache hit)
+68 http cache debug@https://registry.npmjs.org/debug/-/debug-4.4.3.tgz 0ms (cache hit)
+69 http cache ms@https://registry.npmjs.org/ms/-/ms-2.1.3.tgz 0ms (cache hit)
+70 http cache ms@https://registry.npmjs.org/ms/-/ms-2.1.3.tgz 0ms (cache hit)
+71 http cache mime-db@https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz 0ms (cache hit)
+72 http cache debug@https://registry.npmjs.org/debug/-/debug-4.4.3.tgz 0ms (cache hit)
+73 http cache debug@https://registry.npmjs.org/debug/-/debug-4.4.3.tgz 0ms (cache hit)
+74 http cache negotiator@https://registry.npmjs.org/negotiator/-/negotiator-0.6.3.tgz 0ms (cache hit)
+75 warn deprecated node-red-dashboard@3.6.6: No longer maintained - please look at alternatives such as @flowfuse/node-red-dashboard or node-red-contrib-uibuilder
+76 info run node-red-dashboard@3.6.6 postinstall node_modules/node-red-dashboard node fixgrid.js
+77 info run node-red-dashboard@3.6.6 postinstall { code: 0, signal: null }
+78 silly ADD node_modules/ws
+79 silly ADD node_modules/vary
+80 silly ADD node_modules/undici-types
+81 silly ADD node_modules/toidentifier
+82 silly ADD node_modules/statuses
+83 silly ADD node_modules/socket.io-parser
+84 silly ADD node_modules/socket.io-parser/node_modules/ms
+85 silly ADD node_modules/socket.io-parser/node_modules/debug
+86 silly ADD node_modules/socket.io-adapter
+87 silly ADD node_modules/socket.io-adapter/node_modules/ms
+88 silly ADD node_modules/socket.io-adapter/node_modules/debug
+89 silly ADD node_modules/socket.io
+90 silly ADD node_modules/socket.io/node_modules/ms
+91 silly ADD node_modules/socket.io/node_modules/debug
+92 silly ADD node_modules/setprototypeof
+93 silly ADD node_modules/serve-static
+94 silly ADD node_modules/send
+95 silly ADD node_modules/send/node_modules/ms
+96 silly ADD node_modules/safe-buffer
+97 silly ADD node_modules/range-parser
+98 silly ADD node_modules/parseurl
+99 silly ADD node_modules/on-headers
+100 silly ADD node_modules/on-finished
+101 silly ADD node_modules/object-assign
+102 silly ADD node_modules/node-red-dashboard
+103 silly ADD node_modules/negotiator
+104 silly ADD node_modules/ms
+105 silly ADD node_modules/mime-types
+106 silly ADD node_modules/mime-types/node_modules/mime-db
+107 silly ADD node_modules/mime-db
+108 silly ADD node_modules/mime
+109 silly ADD node_modules/jquery
+110 silly ADD node_modules/inherits
+111 silly ADD node_modules/http-errors
+112 silly ADD node_modules/gridstack
+113 silly ADD node_modules/fresh
+114 silly ADD node_modules/etag
+115 silly ADD node_modules/escape-html
+116 silly ADD node_modules/engine.io-parser
+117 silly ADD node_modules/engine.io
+118 silly ADD node_modules/engine.io/node_modules/ms
+119 silly ADD node_modules/engine.io/node_modules/debug
+120 silly ADD node_modules/encodeurl
+121 silly ADD node_modules/ee-first
+122 silly ADD node_modules/destroy
+123 silly ADD node_modules/depd
+124 silly ADD node_modules/debug
+125 silly ADD node_modules/cors
+126 silly ADD node_modules/cookie
+127 silly ADD node_modules/compression
+128 silly ADD node_modules/compressible
+129 silly ADD node_modules/bytes
+130 silly ADD node_modules/base64id
+131 silly ADD node_modules/accepts
+132 silly ADD node_modules/accepts/node_modules/negotiator
+133 silly ADD node_modules/@types/ws
+134 silly ADD node_modules/@types/node
+135 silly ADD node_modules/@types/cors
+136 silly ADD node_modules/@socket.io/component-emitter
+137 verbose cwd /data
+138 verbose os Linux 6.12.76-linuxkit
+139 verbose node v20.20.2
+140 verbose npm  v10.9.8
+141 verbose exit 0
+142 info ok
