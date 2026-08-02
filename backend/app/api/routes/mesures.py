@@ -42,27 +42,39 @@ class MesureUpdate(BaseModel):
 
 
 def send_real_email(to_email: str, subject: str, body: str) -> bool:
-    """Se connecte au serveur SMTP et envoie un e-mail d'alerte."""
+    """Se connecte au serveur SMTP et envoie un e-mail d'alerte.
+
+    Compatible MailHog (démo locale, sans STARTTLS ni authentification)
+    et un vrai serveur SMTP (STARTTLS + login si identifiants fournis).
+    """
     smtp_server = os.getenv("SMTP_SERVER")
     smtp_port = os.getenv("SMTP_PORT")
     smtp_username = os.getenv("SMTP_USERNAME")
     smtp_password = os.getenv("SMTP_PASSWORD")
+    smtp_from = os.getenv("SMTP_FROM", "noreply@futurekawa.com")
 
-    if not smtp_server or not smtp_port or not smtp_username or not smtp_password:
-        print("SMTP non configuré, envoi d'e-mail ignoré.")
+    if not smtp_server or not smtp_port:
+        print("SMTP non configuré (SMTP_SERVER/SMTP_PORT manquants), envoi d'e-mail ignoré.")
+        return False
+    if not smtp_username or not smtp_password:
+        print("Identifiants SMTP manquants (SMTP_USERNAME/SMTP_PASSWORD), envoi d'e-mail ignoré.")
         return False
 
     try:
         msg = MIMEMultipart()
-        msg["From"] = smtp_username
+        msg["From"] = smtp_from
         msg["To"] = to_email
         msg["Subject"] = subject
         msg.attach(MIMEText(body, "plain"))
 
         server = smtplib.SMTP(smtp_server, int(smtp_port))
-        server.starttls()
+        try:
+            server.starttls()
+        except Exception:
+            # Serveur sans STARTTLS (ex: relais SMTP locaux)
+            pass
         server.login(smtp_username, smtp_password)
-        server.sendmail(smtp_username, to_email, msg.as_string())
+        server.sendmail(smtp_from, to_email, msg.as_string())
         server.quit()
         print(f"E-mail envoyé avec succès à {to_email}")
         return True

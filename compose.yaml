@@ -1,0 +1,76 @@
+name: futurekawa-country
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: futurekawa-country-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-futurekawa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-futurekawa}
+      POSTGRES_DB: ${POSTGRES_DB:-futurekawa_local}
+    ports:
+      # Exposé sur le port 5432 uniquement pour le développement local
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-futurekawa} -d ${POSTGRES_DB:-futurekawa_local}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./backend
+    container_name: futurekawa-country-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-futurekawa}:${POSTGRES_PASSWORD:-futurekawa}@postgres:5432/${POSTGRES_DB:-futurekawa_local}
+      API_KEY: ${API_KEY:-dev-local-api-key-change-me}
+      # Envoi des alertes e-mail via Brevo (smtp-relay.brevo.com, port 587)
+      SMTP_SERVER: ${SMTP_SERVER:-smtp-relay.brevo.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-noreply@futurekawa.com}
+    ports:
+      - "8000:8000"
+    volumes:
+      # Code source monté pour rechargement à chaud en développement
+      - ./backend/app:/app/app:ro
+      - ./backend/main.py:/app/main.py:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: futurekawa-country-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+  nodered:
+    image: nodered/node-red:latest
+    container_name: futurekawa-country-nodered
+    restart: unless-stopped
+    ports:
+      - "1880:1880"
+    environment:
+      TZ: Europe/Paris
+    volumes:
+      # Données Node-RED (flows.json...) versionnées dans le repo → portable
+      - ${NODE_RED_DATA_DIR:-./node-red/data}:/data
+
+volumes:
+  db_data:
+    # Volume géré par compose (créé automatiquement sur toute machine).
+    # Un volume vierge est initialisé par ./database/init/01_init.sql.
+

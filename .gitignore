@@ -41,5 +41,14 @@ env/
 *.sqlite3
 *.db
 
+# Node-RED : dépendances et identifiants régénérés localement
+node-red/data/node_modules/
+node-red/data/lib/
+node-red/data/flows_cred.json
+
+# Mosquitto : état d'exécution (base des messages + logs)
+mosquitto/data/
+mosquitto/log/
+
 .DS_Store
 Thumbs.db
