@@ -49,7 +49,7 @@ def send_real_email(to_email: str, subject: str, body: str) -> bool:
     smtp_password = os.getenv("SMTP_PASSWORD")
 
     if not smtp_server or not smtp_port or not smtp_username or not smtp_password:
-        print("⚠️ SMTP non configuré, envoi d'e-mail ignoré.")
+        print("SMTP non configuré, envoi d'e-mail ignoré.")
         return False
 
     try:
@@ -64,10 +64,10 @@ def send_real_email(to_email: str, subject: str, body: str) -> bool:
         server.login(smtp_username, smtp_password)
         server.sendmail(smtp_username, to_email, msg.as_string())
         server.quit()
-        print(f"✅ E-mail envoyé avec succès à {to_email}")
+        print(f"E-mail envoyé avec succès à {to_email}")
         return True
     except Exception as e:
-        print(f"❌ Échec de l'envoi de l'e-mail : {e}")
+        print(f"Échec de l'envoi de l'e-mail : {e}")
         return False
 
 
@@ -85,7 +85,7 @@ def creer_alerte(
     seuil_maximum: Optional[float],
 ) -> None:
     """Crée une alerte et tente l'envoi de l'e-mail au responsable."""
-    sujet = f"⚠️ ALERTE {niveau} - {type_alerte} : {entrepot.nom}"
+    sujet = f"ALERTE {niveau} - {type_alerte} : {entrepot.nom}"
     corps = (
         f"Bonjour {entrepot.nom_responsable},\n\n"
         f"Le capteur {capteur.reference} a détecté une anomalie "

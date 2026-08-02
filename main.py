@@ -16,7 +16,7 @@ from app.api.routes.alertes import router as alerte_router
 
 try:
     Base.metadata.create_all(bind=engine)
-    print("✅ Tables créées ou déjà présentes dans la base.")
+    print("Tables créées ou déjà présentes dans la base.")
 except Exception as e:
     print(f"Warning: impossible de créer les tables au démarrage: {e}")
 
