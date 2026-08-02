@@ -5,11 +5,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Use DATABASE_URL from environment or fallback to a local SQLite file for development
+# Use DATABASE_URL from environment
 DATABASE_URL = os.getenv("DATABASE_URL")
-connect_args = {}
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL est manquant. Configurez-la dans le fichier .env "
+        "(ex: postgresql+psycopg2://user:password@localhost:5433/futurekawa_local)"
+    )
 
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(
     autocommit=False,

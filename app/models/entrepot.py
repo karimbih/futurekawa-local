@@ -1,24 +1,19 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime
-from app.database.db import Base
-from datetime import datetime
+from sqlalchemy import Column, Numeric, String
 
-class Entrepot(Base):
+from app.database.db import Base
+from app.models.base import UUIDTimestampMixin
+
+
+class Entrepot(UUIDTimestampMixin, Base):
     __tablename__ = "entrepots"
 
-    id = Column(Integer, primary_key=True)
-    nom = Column(String(100))
-    ville = Column(String(100))
-    code_pays = Column(String(10))
+    nom = Column(String(150), nullable=False)
+    ville = Column(String(150), nullable=False)
+    code_pays = Column(String(3), nullable=False)
+    nom_responsable = Column(String(150), nullable=False)
+    email_responsable = Column(String(255), nullable=False)
 
-    nom_responsable = Column(String(100))
-    email_responsable = Column(String(255))
-
-    target_temp_c = Column(Float)
-    target_humidity_pct = Column(Float)
-
-    cree_le = Column(DateTime, default=datetime.utcnow)
-    mis_a_jour_le = Column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
-    )
+    temperature_min_c = Column(Numeric(5, 2), nullable=False)
+    temperature_max_c = Column(Numeric(5, 2), nullable=False)
+    humidite_min_pct = Column(Numeric(5, 2), nullable=False)
+    humidite_max_pct = Column(Numeric(5, 2), nullable=False)

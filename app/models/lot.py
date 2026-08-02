@@ -1,21 +1,20 @@
-from sqlalchemy import *
-from app.database.db import Base
+from sqlalchemy import Column, Date, ForeignKey, Numeric, String, Uuid
 
-class Lot(Base):
+from app.database.db import Base
+from app.models.base import UUIDTimestampMixin
+
+
+class Lot(UUIDTimestampMixin, Base):
     __tablename__ = "lots"
 
-    id = Column(Integer, primary_key=True)
-
-    code_lot = Column(String(100), unique=True)
-
+    code_lot = Column(String(100), unique=True, nullable=False)
     entrepot_id = Column(
-        Integer,
-        ForeignKey("entrepots.id")
+        Uuid(as_uuid=True),
+        ForeignKey("entrepots.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
-
-    date_stockage = Column(Date)
-
-    statut = Column(String(50))
-
-    cree_le = Column(DateTime)
-    mis_a_jour_le = Column(DateTime)
+    produit = Column(String(150), nullable=False)
+    quantite_kg = Column(Numeric(12, 2), nullable=False)
+    date_stockage = Column(Date, nullable=False)
+    statut = Column(String(30), nullable=False, default="EN_STOCK")

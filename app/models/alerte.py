@@ -1,25 +1,44 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
-from datetime import datetime
-from app.database.db import Base
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Numeric, String, Text, Uuid, func
 
-class Alerte(Base):
+from app.database.db import Base
+from app.models.base import UUIDTimestampMixin
+
+
+class Alerte(UUIDTimestampMixin, Base):
     __tablename__ = "alertes"
 
-    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-
-    # Clés étrangères (avec comportement de suppression en cascade si nécessaire)
-    entrepot_id = Column(Integer, ForeignKey("entrepots.id", ondelete="CASCADE"), nullable=False)
-    lot_id = Column(Integer, ForeignKey("lots.id", ondelete="SET NULL"), nullable=True)
-    mesure_id = Column(Integer, ForeignKey("mesures.id", ondelete="SET NULL"), nullable=True)
-
+    entrepot_id = Column(
+        Uuid(as_uuid=True),
+        ForeignKey("entrepots.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    lot_id = Column(
+        Uuid(as_uuid=True),
+        ForeignKey("lots.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    capteur_id = Column(
+        Uuid(as_uuid=True),
+        ForeignKey("capteurs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     type_alerte = Column(String(50), nullable=False)
+    niveau = Column(String(20), nullable=False, default="MOYEN")
+    statut = Column(String(30), nullable=False, default="ACTIVE")
     message = Column(Text, nullable=False)
-    statut = Column(String(30), default="Active")
-
-    # Champs de suivi pour l'envoi d'emails (exigence du projet)
-    email_status = Column(String(30), default="PENDING")
-    email_error_message = Column(Text, nullable=True)
-
-    # Remplissage automatique de la date au moment du déclenchement
-    declenchee_le = Column(DateTime, default=datetime.utcnow)
-    resolue_le = Column(DateTime, nullable=True)
+    valeur_detectee = Column(Numeric(10, 2), nullable=True)
+    seuil_minimum = Column(Numeric(10, 2), nullable=True)
+    seuil_maximum = Column(Numeric(10, 2), nullable=True)
+    date_declenchement = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    date_resolution = Column(DateTime(timezone=True), nullable=True)
+    resolue_par = Column(Uuid(as_uuid=True), nullable=True)
+    commentaire_resolution = Column(Text, nullable=True)
+    email_envoye = Column(Boolean, nullable=False, default=False)
+    date_email = Column(DateTime(timezone=True), nullable=True)
