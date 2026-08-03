@@ -125,29 +125,8 @@ CREATE INDEX IF NOT EXISTS ix_alertes_capteur_id  ON alertes(capteur_id);
 CREATE INDEX IF NOT EXISTS ix_alertes_lot_id      ON alertes(lot_id);
 
 -- =============================================================
--- Jeu de données de démonstration
--- =============================================================
-INSERT INTO entrepots (id, nom, ville, code_pays, nom_responsable, email_responsable,
-                       temperature_min_c, temperature_max_c, humidite_min_pct, humidite_max_pct)
-VALUES
-    ('11111111-1111-1111-1111-111111111111', 'Entrepôt São Paulo', 'São Paulo', 'BRA',
-     'Maria Silva', 'maria.silva@example.com', 18.0, 24.0, 40.0, 70.0),
-    ('22222222-2222-2222-2222-222222222222', 'Entrepôt Ho Chi Minh', 'Hô-Chi-Minh-Ville', 'VNM',
-     'Nguyen An', 'nguyen.an@example.com', 16.0, 22.0, 35.0, 65.0)
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO capteurs (id, entrepot_id, reference, topic_mqtt, type_capteur, statut, frequence_mesure_secondes)
-VALUES
-    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111',
-     'ESP32-DHT22-001', 'futurekawa/bra/esp32-dht22-001', 'TEMPERATURE_HUMIDITE', 'ACTIF', 60),
-    ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '22222222-2222-2222-2222-222222222222',
-     'ESP32-DHT22-002', 'futurekawa/vnm/esp32-dht22-002', 'TEMPERATURE_HUMIDITE', 'ACTIF', 30)
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO lots (id, code_lot, entrepot_id, produit, quantite_kg, date_stockage, statut)
-VALUES
-    ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'BRA-2026-001', '11111111-1111-1111-1111-111111111111',
-     'Café Arabica - Grain vert', 12000.00, '2026-07-01', 'EN_STOCK'),
-    ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'VNM-2026-002', '22222222-2222-2222-2222-222222222222',
-     'Café Robusta - Grain vert', 8500.50, '2026-07-15', 'EN_STOCK')
-ON CONFLICT (id) DO NOTHING;
+-- Aucune donnée de démonstration ici : les pays en mode "mock"
+-- (Brésil, Colombie) sont alimentés par la base centrale
+-- (app/mock_data.py côté futurekawa-central). Le backend local
+-- sert uniquement les pays réels (ex : Équateur) qui doivent
+-- démarrer avec une base vide.
