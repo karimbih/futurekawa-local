@@ -9,6 +9,30 @@
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- ---------- pays (config locale : bandes idéales + responsable exploitation) ----------
+CREATE TABLE IF NOT EXISTS pays (
+    id                            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code_iso                      VARCHAR(3)  NOT NULL UNIQUE,
+    nom                           VARCHAR(100) NOT NULL,
+    temperature_cible_c           NUMERIC(5,2) NOT NULL,
+    humidite_cible_pct            NUMERIC(5,2) NOT NULL,
+    tolerance_temperature_c       NUMERIC(5,2) NOT NULL,
+    tolerance_humidite_pct        NUMERIC(5,2) NOT NULL,
+    responsable_exploitation_nom  VARCHAR(150) NOT NULL,
+    responsable_exploitation_email VARCHAR(255) NOT NULL,
+    cree_le                       TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    mis_a_jour_le                 TIMESTAMPTZ  NOT NULL DEFAULT now()
+);
+
+INSERT INTO pays (code_iso, nom, temperature_cible_c, humidite_cible_pct,
+                  tolerance_temperature_c, tolerance_humidite_pct,
+                  responsable_exploitation_nom, responsable_exploitation_email)
+VALUES
+    ('BRA', 'Brésil', 29.0, 55.0, 3.0, 2.0, 'Ana Oliveira', 'responsable.exploitation.bra@example.com'),
+    ('ECU', 'Équateur', 31.0, 60.0, 3.0, 2.0, 'Carlos Mendoza', 'responsable.exploitation.ecu@example.com'),
+    ('COL', 'Colombie', 26.0, 80.0, 3.0, 2.0, 'Laura Gómez', 'responsable.exploitation.col@example.com')
+ON CONFLICT (code_iso) DO NOTHING;
+
 -- ---------- entrepots ----------
 CREATE TABLE IF NOT EXISTS entrepots (
     id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -1,7 +1,11 @@
+import asyncio
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from app.database.db import engine, Base
+from app.database.db import engine, Base, SessionLocal
 
+from app.models.pays import Pays
 from app.models.entrepot import Entrepot
 from app.models.capteur import Capteur
 from app.models.lot import Lot
@@ -14,16 +18,42 @@ from app.api.routes.lots import router as lot_router
 from app.api.routes.mesures import router as mesure_router
 from app.api.routes.alertes import router as alerte_router
 
+from app.services.seed import seed_pays
+from app.services.alertes import boucle_verification_lots_anciens, run_verification_lots_anciens
+
 try:
     Base.metadata.create_all(bind=engine)
     print("Tables créées ou déjà présentes dans la base.")
 except Exception as e:
     print(f"Warning: impossible de créer les tables au démarrage: {e}")
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Config pays locale (bandes idéales + contact responsable exploitation)
+    db = SessionLocal()
+    try:
+        seed_pays(db)
+    finally:
+        db.close()
+
+    # Première passe immédiate des lots trop anciens, puis surveillance périodique
+    try:
+        run_verification_lots_anciens()
+    except Exception as e:
+        print(f"Warning: première vérification des lots anciens impossible: {e}")
+    tache = asyncio.create_task(boucle_verification_lots_anciens())
+
+    yield
+
+    tache.cancel()
+
+
 app = FastAPI(
     title="FutureKawa Backend Local",
-    version="2.0.0",
+    version="2.1.0",
     description="Backend local par pays : entrepôts, capteurs, lots, mesures et alertes.",
+    lifespan=lifespan,
 )
 
 app.include_router(entrepot_router, prefix="/entrepots", tags=["Entrepots"])

@@ -1,12 +1,7 @@
-import os
-import smtplib
 from datetime import datetime, timezone
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from typing import Optional
 from uuid import UUID
 
-from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -14,13 +9,11 @@ from sqlalchemy.orm import Session
 from app.core.security import require_api_key
 from app.core.utils import get_pagination, paginated_response
 from app.database.db import get_db
-from app.models.alerte import Alerte
 from app.models.capteur import Capteur
 from app.models.entrepot import Entrepot
 from app.models.lot import Lot
 from app.models.mesure import Mesure
-
-load_dotenv()
+from app.services.alertes import detecter_anomalies_conditions
 
 router = APIRouter(dependencies=[Depends(require_api_key)])
 
@@ -39,96 +32,6 @@ class MesureCreate(BaseModel):
 
 class MesureUpdate(BaseModel):
     lot_id: Optional[UUID] = None
-
-
-def send_real_email(to_email: str, subject: str, body: str) -> bool:
-    """Se connecte au serveur SMTP et envoie un e-mail d'alerte.
-
-    Compatible MailHog (démo locale, sans STARTTLS ni authentification)
-    et un vrai serveur SMTP (STARTTLS + login si identifiants fournis).
-    """
-    smtp_server = os.getenv("SMTP_SERVER")
-    smtp_port = os.getenv("SMTP_PORT")
-    smtp_username = os.getenv("SMTP_USERNAME")
-    smtp_password = os.getenv("SMTP_PASSWORD")
-    smtp_from = os.getenv("SMTP_FROM", "noreply@futurekawa.com")
-
-    if not smtp_server or not smtp_port:
-        print("SMTP non configuré (SMTP_SERVER/SMTP_PORT manquants), envoi d'e-mail ignoré.")
-        return False
-    if not smtp_username or not smtp_password:
-        print("Identifiants SMTP manquants (SMTP_USERNAME/SMTP_PASSWORD), envoi d'e-mail ignoré.")
-        return False
-
-    try:
-        msg = MIMEMultipart()
-        msg["From"] = smtp_from
-        msg["To"] = to_email
-        msg["Subject"] = subject
-        msg.attach(MIMEText(body, "plain"))
-
-        server = smtplib.SMTP(smtp_server, int(smtp_port))
-        try:
-            server.starttls()
-        except Exception:
-            # Serveur sans STARTTLS (ex: relais SMTP locaux)
-            pass
-        server.login(smtp_username, smtp_password)
-        server.sendmail(smtp_from, to_email, msg.as_string())
-        server.quit()
-        print(f"E-mail envoyé avec succès à {to_email}")
-        return True
-    except Exception as e:
-        print(f"Échec de l'envoi de l'e-mail : {e}")
-        return False
-
-
-def creer_alerte(
-    db: Session,
-    *,
-    entrepot: Entrepot,
-    capteur: Capteur,
-    lot: Optional[Lot],
-    type_alerte: str,
-    niveau: str,
-    message: str,
-    valeur_detectee: float,
-    seuil_minimum: Optional[float],
-    seuil_maximum: Optional[float],
-) -> None:
-    """Crée une alerte et tente l'envoi de l'e-mail au responsable."""
-    sujet = f"ALERTE {niveau} - {type_alerte} : {entrepot.nom}"
-    corps = (
-        f"Bonjour {entrepot.nom_responsable},\n\n"
-        f"Le capteur {capteur.reference} a détecté une anomalie "
-        f"dans l'entrepôt {entrepot.nom} ({entrepot.ville}).\n\n"
-        f"Détails : {message}\n"
-        f"Valeur détectée : {valeur_detectee}\n"
-        f"Seuils : min={seuil_minimum}, max={seuil_maximum}\n\n"
-        f"Cordialement,\nL'équipe FutureKawa."
-    )
-    email_envoye = send_real_email(
-        to_email=entrepot.email_responsable,
-        subject=sujet,
-        body=corps,
-    )
-
-    db.add(
-        Alerte(
-            entrepot_id=entrepot.id,
-            lot_id=lot.id if lot else None,
-            capteur_id=capteur.id,
-            type_alerte=type_alerte,
-            niveau=niveau,
-            statut="ACTIVE",
-            message=message,
-            valeur_detectee=valeur_detectee,
-            seuil_minimum=seuil_minimum,
-            seuil_maximum=seuil_maximum,
-            email_envoye=email_envoye,
-            date_email=datetime.now(timezone.utc) if email_envoye else None,
-        )
-    )
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
@@ -185,77 +88,15 @@ def receive_mesure(mesure: MesureCreate, db: Session = Depends(get_db)):
     capteur.derniere_communication = datetime.now(timezone.utc)
     db.add(capteur)
 
-    # 6. Détection d'anomalies par rapport aux seuils de l'entrepôt
-    temperature = float(mesure.temperature_c)
-    humidite = float(mesure.humidite_pct)
-    t_min, t_max = float(entrepot.temperature_min_c), float(entrepot.temperature_max_c)
-    h_min, h_max = float(entrepot.humidite_min_pct), float(entrepot.humidite_max_pct)
-
-    if temperature > t_max:
-        creer_alerte(
-            db,
-            entrepot=entrepot,
-            capteur=capteur,
-            lot=lot,
-            type_alerte="TEMPERATURE_ELEVEE",
-            niveau="ELEVE",
-            message=(
-                f"Température critique : {temperature}°C mesurés "
-                f"(Seuil max : {t_max}°C)."
-            ),
-            valeur_detectee=temperature,
-            seuil_minimum=t_min,
-            seuil_maximum=t_max,
-        )
-    elif temperature < t_min:
-        creer_alerte(
-            db,
-            entrepot=entrepot,
-            capteur=capteur,
-            lot=lot,
-            type_alerte="TEMPERATURE_BASSE",
-            niveau="MOYEN",
-            message=(
-                f"Température trop basse : {temperature}°C mesurés "
-                f"(Seuil min : {t_min}°C)."
-            ),
-            valeur_detectee=temperature,
-            seuil_minimum=t_min,
-            seuil_maximum=t_max,
-        )
-
-    if humidite > h_max:
-        creer_alerte(
-            db,
-            entrepot=entrepot,
-            capteur=capteur,
-            lot=lot,
-            type_alerte="HUMIDITE_ELEVEE",
-            niveau="ELEVE",
-            message=(
-                f"Humidité critique : {humidite}% mesurés "
-                f"(Seuil max : {h_max}%)."
-            ),
-            valeur_detectee=humidite,
-            seuil_minimum=h_min,
-            seuil_maximum=h_max,
-        )
-    elif humidite < h_min:
-        creer_alerte(
-            db,
-            entrepot=entrepot,
-            capteur=capteur,
-            lot=lot,
-            type_alerte="HUMIDITE_BASSE",
-            niveau="MOYEN",
-            message=(
-                f"Humidité trop basse : {humidite}% mesurés "
-                f"(Seuil min : {h_min}%)."
-            ),
-            valeur_detectee=humidite,
-            seuil_minimum=h_min,
-            seuil_maximum=h_max,
-        )
+    # 6. Détection d'anomalies par rapport à la bande idéale du pays (cible ± tolérance)
+    detecter_anomalies_conditions(
+        db,
+        entrepot=entrepot,
+        capteur=capteur,
+        lot=lot,
+        temperature=float(mesure.temperature_c),
+        humidite=float(mesure.humidite_pct),
+    )
 
     db.commit()
     db.refresh(db_mesure)
