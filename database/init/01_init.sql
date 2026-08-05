@@ -126,7 +126,7 @@ CREATE INDEX IF NOT EXISTS ix_alertes_lot_id      ON alertes(lot_id);
 
 -- =============================================================
 -- Aucune donnée de démonstration ici : les pays en mode "mock"
--- (Brésil, Colombie) sont alimentés par la base centrale
+-- (Brésil, Équateur) sont alimentés par la base centrale
 -- (app/mock_data.py côté futurekawa-central). Le backend local
--- sert uniquement les pays réels (ex : Équateur) qui doivent
--- démarrer avec une base vide.
+-- sert le pays réel (Colombie, mock=false) qui doit démarrer
+-- avec une base vide et recevoir ses données du terrain (MQTT/API).
