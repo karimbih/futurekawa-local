@@ -39,6 +39,17 @@
         "sessionExpiry": ""
     },
     {
+        "id": "aa2cb3991c9e0f5f",
+        "type": "ui_group",
+        "name": "DHT22",
+        "tab": "c9a92fe5937ec9dd",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
         "id": "c9a92fe5937ec9dd",
         "type": "ui_tab",
         "name": "ESP32 Dashboard",
@@ -143,22 +154,11 @@
         }
     },
     {
-        "id": "aa2cb3991c9e0f5f",
-        "type": "ui_group",
-        "name": "DHT22",
-        "tab": "c9a92fe5937ec9dd",
-        "order": 1,
-        "disp": true,
-        "width": 6,
-        "collapse": false,
-        "className": ""
-    },
-    {
         "id": "dc871dae32238208",
         "type": "mqtt in",
         "z": "367cf04d344f352a",
         "name": "",
-        "topic": "futurekawa/col/esp32-dht22-co-001",
+        "topic": "esp32/dht22/data",
         "qos": "2",
         "datatype": "json",
         "broker": "8d7d114b69425d6b",
@@ -166,7 +166,7 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 360,
+        "x": 470,
         "y": 300,
         "wires": [
             [
