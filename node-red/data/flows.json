@@ -166,12 +166,13 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 360,
+        "x": 180,
         "y": 300,
         "wires": [
             [
                 "3f5afe2bdc7860d0",
-                "94351064b384b465"
+                "94351064b384b465",
+                "52d63aa1d71c32b4"
             ]
         ]
     },
@@ -188,8 +189,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 990,
-        "y": 260,
+        "x": 830,
+        "y": 180,
         "wires": []
     },
     {
@@ -205,8 +206,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 980,
-        "y": 420,
+        "x": 820,
+        "y": 360,
         "wires": []
     },
     {
@@ -233,8 +234,8 @@
         "seg2": "",
         "diff": false,
         "className": "",
-        "x": 970,
-        "y": 200,
+        "x": 790,
+        "y": 120,
         "wires": []
     },
     {
@@ -249,8 +250,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 730,
-        "y": 220,
+        "x": 490,
+        "y": 140,
         "wires": [
             [
                 "a267c7d55ff02204",
@@ -270,8 +271,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 720,
-        "y": 400,
+        "x": 480,
+        "y": 300,
         "wires": [
             [
                 "09f263dc788ee317",
@@ -303,8 +304,94 @@
         "seg2": "",
         "diff": false,
         "className": "",
-        "x": 960,
-        "y": 380,
+        "x": 780,
+        "y": 300,
         "wires": []
+    },
+    {
+        "id": "88c071a2b20f041f",
+        "type": "http request",
+        "z": "367cf04d344f352a",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 850,
+        "y": 520,
+        "wires": [
+            [
+                "fbca479ccb701cd5"
+            ]
+        ]
+    },
+    {
+        "id": "52d63aa1d71c32b4",
+        "type": "function",
+        "z": "367cf04d344f352a",
+        "name": "Vers API Local",
+        "func": "let data = msg.payload;\n\n// MQTT data is often a string\nif (typeof data === \"string\") {\n    try {\n        data = JSON.parse(data);\n    } catch (error) {\n        node.error(\"Invalid MQTT JSON: \" + error.message, msg);\n        return null;\n    }\n}\n\n// Prepare exactly the payload required by POST /mesures/.\nmsg.payload = {\n    topic_mqtt: msg.topic,\n    temperature_c: Number(data.temperature),\n    humidite_pct: Number(data.humidity),\n    date_mesure: new Date().toISOString()\n};\n\n// Change the host only if Node-RED cannot reach the local API this way.\nmsg.url = \"http://host.docker.internal:8000/mesures/\";\nmsg.method = \"POST\";\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\",\n    \"X-API-Key\": \"CDWRggjsE0FCH4Zjx3AVfTL2PdHsJN06\"\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 520,
+        "wires": [
+            [
+                "344952e3540f6295"
+            ]
+        ]
+    },
+    {
+        "id": "fbca479ccb701cd5",
+        "type": "debug",
+        "z": "367cf04d344f352a",
+        "name": "FastAPI response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "344952e3540f6295",
+        "type": "delay",
+        "z": "367cf04d344f352a",
+        "name": "Intervalle de 30s",
+        "pauseType": "rate",
+        "timeout": "30",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "30",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 660,
+        "y": 520,
+        "wires": [
+            [
+                "88c071a2b20f041f"
+            ]
+        ]
     }
 ]

@@ -93,12 +93,15 @@ def get_bande_pays(db: Session, code_pays: str) -> Optional[dict]:
 
 
 def _destinataire_alerte(db: Session, entrepot: Entrepot) -> tuple[str, str]:
-    """Destinataire prioritaire : responsable d'exploitation du pays (PDF §III.4),
-    repli sur le responsable d'entrepôt si la config pays est absente."""
+    """Destinataire prioritaire : le responsable de l'entrepôt concerné (celui vers qui
+    l'alerte doit arriver), repli sur le responsable d'exploitation du pays si l'entrepôt
+    n'a pas d'e-mail de contact renseigné."""
+    if entrepot.email_responsable:
+        return entrepot.email_responsable, entrepot.nom_responsable
     pays = get_pays_config(db, entrepot.code_pays)
     if pays:
         return pays.responsable_exploitation_email, pays.responsable_exploitation_nom
-    return entrepot.email_responsable, entrepot.nom_responsable
+    return (None, entrepot.nom_responsable)
 
 
 # ---------------- Création d'une alerte ----------------
@@ -116,7 +119,31 @@ def creer_alerte(
     seuil_minimum: Optional[float],
     seuil_maximum: Optional[float],
 ) -> None:
-    """Crée une alerte et tente l'envoi de l'e-mail au responsable d'exploitation."""
+    """Crée une alerte et tente l'envoi de l'e-mail au responsable.
+
+    Anti-spam : si une alerte du même type est déjà ACTIVE / PRISE_EN_COMPTE pour ce
+    capteur/entrepôt (incident en cours), on ne crée pas de nouvelle alerte et on
+    n'envoie pas un nouvel e-mail — on rafraîchit simplement la valeur détectée.
+    L'incident ne renvoie un e-mail qu'à sa première détection, ou après résolution.
+    """
+    existante = (
+        db.query(Alerte)
+        .filter(
+            Alerte.entrepot_id == entrepot.id,
+            Alerte.capteur_id == (capteur.id if capteur else None),
+            Alerte.type_alerte == type_alerte,
+            Alerte.statut.in_(["ACTIVE", "PRISE_EN_COMPTE"]),
+        )
+        .first()
+    )
+    if existante is not None:
+        existante.valeur_detectee = valeur_detectee
+        existante.seuil_minimum = seuil_minimum
+        existante.seuil_maximum = seuil_maximum
+        existante.message = message
+        db.add(existante)
+        return
+
     destinataire, nom_destinataire = _destinataire_alerte(db, entrepot)
 
     sujet = f"ALERTE {niveau} - {type_alerte} : {entrepot.nom}"
